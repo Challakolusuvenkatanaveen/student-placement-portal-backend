@@ -16,9 +16,15 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    // JWT secret will come from application.properties
     @Value("${jwt.secret}")
     private String secret;
+
+    private static final long EXPIRATION =
+            1000 * 60 * 60 * 24;
+
+    // =============================
+    // Get Secret Key
+    // =============================
 
     private SecretKey getKey() {
 
@@ -26,9 +32,6 @@ public class JwtUtil {
                 secret.getBytes(StandardCharsets.UTF_8)
         );
     }
-
-    private static final long EXPIRATION =
-            1000L * 60 * 60 * 24;
 
     // =============================
     // Generate Token
@@ -58,8 +61,7 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
 
-        return extractClaims(token)
-                .getSubject();
+        return extractClaims(token).getSubject();
     }
 
     // =============================
@@ -68,8 +70,7 @@ public class JwtUtil {
 
     public Date extractExpiration(String token) {
 
-        return extractClaims(token)
-                .getExpiration();
+        return extractClaims(token).getExpiration();
     }
 
     // =============================
