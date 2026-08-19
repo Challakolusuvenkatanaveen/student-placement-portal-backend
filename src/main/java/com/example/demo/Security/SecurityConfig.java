@@ -63,17 +63,22 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        // Allow local frontend and deployed Vercel frontend
-        configuration.setAllowedOrigins(
+        // ====================================
+        // Allowed Origins
+        // ====================================
+
+        configuration.setAllowedOriginPatterns(
                 List.of(
                         "http://localhost:5173",
                         "http://localhost:5174",
-                        "https://student-placement-portal-frontend.vercel.app",
-                        "https://student-placement-portal-frontend-mi8lyndzj.vercel.app"
+                        "https://*.vercel.app"
                 )
         );
 
-        // Allowed HTTP methods
+        // ====================================
+        // Allowed HTTP Methods
+        // ====================================
+
         configuration.setAllowedMethods(
                 List.of(
                         "GET",
@@ -85,13 +90,23 @@ public class SecurityConfig {
                 )
         );
 
-        // Allow all request headers
+        // ====================================
+        // Allowed Headers
+        // ====================================
+
         configuration.setAllowedHeaders(
                 List.of("*")
         );
 
-        // Allow cookies / Authorization credentials
+        // ====================================
+        // Allow Credentials
+        // ====================================
+
         configuration.setAllowCredentials(true);
+
+        // ====================================
+        // Register CORS Configuration
+        // ====================================
 
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
@@ -116,22 +131,35 @@ public class SecurityConfig {
 
         http
 
-                // Disable CSRF because we are using JWT
+                // ====================================
+                // Disable CSRF
+                // ====================================
+
                 .csrf(csrf -> csrf.disable())
 
+                // ====================================
                 // Enable CORS
+                // ====================================
+
                 .cors(cors ->
                         cors.configurationSource(
                                 corsConfigurationSource()
                         )
                 )
 
-                // Stateless session for JWT
+                // ====================================
+                // Stateless Session
+                // ====================================
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
                         )
                 )
+
+                // ====================================
+                // Authorization
+                // ====================================
 
                 .authorizeHttpRequests(auth -> auth
 
