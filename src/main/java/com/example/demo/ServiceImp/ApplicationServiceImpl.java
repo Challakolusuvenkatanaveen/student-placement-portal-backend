@@ -29,110 +29,311 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     private JobRepository jobRepository;
 
+
+    // =========================================================
     // Entity -> DTO
+    // =========================================================
+
     private ApplicationDTO convertToDTO(Application application) {
 
         ApplicationDTO dto = new ApplicationDTO();
 
-        dto.setApplicationId(application.getApplicationId());
-        dto.setStudentId(application.getStudent().getStudentId());
-        dto.setJobId(application.getJob().getJobId());
-        dto.setAppliedDate(application.getAppliedDate());
-        dto.setStatus(application.getStatus());
+
+        // =====================================================
+        // Application Details
+        // =====================================================
+
+        dto.setApplicationId(
+                application.getApplicationId()
+        );
+
+        dto.setAppliedDate(
+                application.getAppliedDate()
+        );
+
+        dto.setStatus(
+                application.getStatus()
+        );
+
+
+        // =====================================================
+        // Student Details
+        // =====================================================
+
+        if (application.getStudent() != null) {
+
+            Student student = application.getStudent();
+
+            dto.setStudentId(
+                    student.getStudentId()
+            );
+
+            dto.setStudentName(
+                    (student.getFirstName() != null
+                            ? student.getFirstName()
+                            : "")
+                    + " "
+                    +
+                    (student.getLastName() != null
+                            ? student.getLastName()
+                            : "")
+            );
+
+            dto.setStudentEmail(
+                    student.getEmail()
+            );
+
+            dto.setCgpa(
+                    student.getCgpa()
+            );
+        }
+
+
+        // =====================================================
+        // Job Details
+        // =====================================================
+
+        if (application.getJob() != null) {
+
+            Job job = application.getJob();
+
+            dto.setJobId(
+                    job.getJobId()
+            );
+
+            dto.setJobTitle(
+                    job.getJobTitle()
+            );
+
+            dto.setLocation(
+                    job.getLocation()
+            );
+
+            dto.setSalary(
+                    job.getSalary()
+            );
+
+            dto.setJobType(
+                    job.getJobType()
+            );
+
+
+            // =================================================
+            // Company Details
+            // =================================================
+
+            if (job.getCompany() != null) {
+
+                dto.setCompanyName(
+                        job.getCompany().getCompanyName()
+                );
+            }
+        }
+
 
         return dto;
     }
 
+
+    // =========================================================
+    // Apply Job
+    // =========================================================
+
     @Override
-    public ApplicationDTO applyJob(Long studentId, Long jobId) {
+    public ApplicationDTO applyJob(
+            Long studentId,
+            Long jobId) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Student Not Found"));
+        Student student =
+                studentRepository.findById(studentId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Student Not Found"
+                                )
+                        );
 
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Job Not Found"));
 
-        if (applicationRepository.existsByStudentStudentIdAndJobJobId(studentId, jobId)) {
-            throw new RuntimeException("Student has already applied for this job.");
+        Job job =
+                jobRepository.findById(jobId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Job Not Found"
+                                )
+                        );
+
+
+        if (applicationRepository
+                .existsByStudentStudentIdAndJobJobId(
+                        studentId,
+                        jobId)) {
+
+            throw new RuntimeException(
+                    "Student has already applied for this job."
+            );
         }
 
-        Application application = new Application();
+
+        Application application =
+                new Application();
+
 
         application.setStudent(student);
+
         application.setJob(job);
-        application.setAppliedDate(LocalDate.now());
-        application.setStatus("Applied");
 
-        Application savedApplication = applicationRepository.save(application);
+        application.setAppliedDate(
+                LocalDate.now()
+        );
 
-        return convertToDTO(savedApplication);
+        application.setStatus(
+                "Applied"
+        );
+
+
+        Application savedApplication =
+                applicationRepository.save(
+                        application
+                );
+
+
+        return convertToDTO(
+                savedApplication
+        );
     }
-    
+
+
+    // =========================================================
+    // Get Applications By Student
+    // =========================================================
+
     @Override
-    public List<ApplicationDTO> getApplicationsByStudent(Long studentId) {
+    public List<ApplicationDTO> getApplicationsByStudent(
+            Long studentId) {
 
         studentRepository.findById(studentId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Student Not Found"));
+                        new ResourceNotFoundException(
+                                "Student Not Found"
+                        )
+                );
+
 
         List<Application> applications =
-                applicationRepository.findByStudentStudentId(studentId);
+                applicationRepository
+                        .findByStudentStudentId(studentId);
 
-        List<ApplicationDTO> dtoList = new ArrayList<>();
 
-        for (Application application : applications) {
-            dtoList.add(convertToDTO(application));
+        List<ApplicationDTO> dtoList =
+                new ArrayList<>();
+
+
+        for (Application application :
+                applications) {
+
+            dtoList.add(
+                    convertToDTO(application)
+            );
         }
+
 
         return dtoList;
     }
 
+
+    // =========================================================
+    // Get Applications By Job
+    // =========================================================
+
     @Override
-    public List<ApplicationDTO> getApplicationsByJob(Long jobId) {
+    public List<ApplicationDTO> getApplicationsByJob(
+            Long jobId) {
 
         jobRepository.findById(jobId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Job Not Found"));
+                        new ResourceNotFoundException(
+                                "Job Not Found"
+                        )
+                );
+
 
         List<Application> applications =
-                applicationRepository.findByJobJobId(jobId);
+                applicationRepository
+                        .findByJobJobId(jobId);
 
-        List<ApplicationDTO> dtoList = new ArrayList<>();
 
-        for (Application application : applications) {
-            dtoList.add(convertToDTO(application));
+        List<ApplicationDTO> dtoList =
+                new ArrayList<>();
+
+
+        for (Application application :
+                applications) {
+
+            dtoList.add(
+                    convertToDTO(application)
+            );
         }
+
 
         return dtoList;
     }
-    
-    
-    @Override
-    public ApplicationDTO updateApplicationStatus(Long applicationId,
-                                                  String status) {
 
-        Application application = applicationRepository.findById(applicationId)
+
+    // =========================================================
+    // Update Application Status
+    // =========================================================
+
+    @Override
+    public ApplicationDTO updateApplicationStatus(
+            Long applicationId,
+            String status) {
+
+        Application application =
+                applicationRepository.findById(
+                        applicationId
+                )
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Application Not Found"));
+                        new ResourceNotFoundException(
+                                "Application Not Found"
+                        )
+                );
+
 
         application.setStatus(status);
 
-        Application updatedApplication =
-                applicationRepository.save(application);
 
-        return convertToDTO(updatedApplication);
+        Application updatedApplication =
+                applicationRepository.save(
+                        application
+                );
+
+
+        return convertToDTO(
+                updatedApplication
+        );
     }
+
+
+    // =========================================================
+    // Cancel Application
+    // =========================================================
 
     @Override
-    public void cancelApplication(Long applicationId) {
+    public void cancelApplication(
+            Long applicationId) {
 
-        Application application = applicationRepository.findById(applicationId)
+        Application application =
+                applicationRepository.findById(
+                        applicationId
+                )
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Application Not Found"));
+                        new ResourceNotFoundException(
+                                "Application Not Found"
+                        )
+                );
 
-        applicationRepository.delete(application);
+
+        applicationRepository.delete(
+                application
+        );
     }
-
 }

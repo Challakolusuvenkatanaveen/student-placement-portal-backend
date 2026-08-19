@@ -6,22 +6,29 @@ public class ApplicationDTO {
 
     private Long applicationId;
 
-    // Existing fields
+    // Student details
     private Long studentId;
-    private Long jobId;
-    private LocalDate appliedDate;
-
-    // Company module fields
     private String studentName;
     private String studentEmail;
-    private String jobTitle;
     private Double cgpa;
     private String resumeUrl;
 
+    // Job details
+    private Long jobId;
+    private String jobTitle;
+    private String companyName;
+    private String location;
+    private Double salary;
+    private String jobType;
+
+    // Application details
+    private LocalDate appliedDate;
     private String status;
+
 
     public ApplicationDTO() {
     }
+
 
     public Long getApplicationId() {
         return applicationId;
@@ -31,6 +38,7 @@ public class ApplicationDTO {
         this.applicationId = applicationId;
     }
 
+
     public Long getStudentId() {
         return studentId;
     }
@@ -39,21 +47,6 @@ public class ApplicationDTO {
         this.studentId = studentId;
     }
 
-    public Long getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
-    }
-
-    public LocalDate getAppliedDate() {
-        return appliedDate;
-    }
-
-    public void setAppliedDate(LocalDate appliedDate) {
-        this.appliedDate = appliedDate;
-    }
 
     public String getStudentName() {
         return studentName;
@@ -63,6 +56,7 @@ public class ApplicationDTO {
         this.studentName = studentName;
     }
 
+
     public String getStudentEmail() {
         return studentEmail;
     }
@@ -71,13 +65,6 @@ public class ApplicationDTO {
         this.studentEmail = studentEmail;
     }
 
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
 
     public Double getCgpa() {
         return cgpa;
@@ -87,6 +74,7 @@ public class ApplicationDTO {
         this.cgpa = cgpa;
     }
 
+
     public String getResumeUrl() {
         return resumeUrl;
     }
@@ -94,6 +82,70 @@ public class ApplicationDTO {
     public void setResumeUrl(String resumeUrl) {
         this.resumeUrl = resumeUrl;
     }
+
+
+    public Long getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
+    }
+
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+
+    public Double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
+    }
+
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
+    }
+
+
+    public LocalDate getAppliedDate() {
+        return appliedDate;
+    }
+
+    public void setAppliedDate(LocalDate appliedDate) {
+        this.appliedDate = appliedDate;
+    }
+
 
     public String getStatus() {
         return status;
