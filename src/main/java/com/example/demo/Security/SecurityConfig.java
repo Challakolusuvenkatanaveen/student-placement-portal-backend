@@ -63,26 +63,34 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
+        // Allow local frontend and deployed Vercel frontend
         configuration.setAllowedOrigins(
                 List.of(
-                        "http://localhost:5174"
+                        "http://localhost:5173",
+                        "http://localhost:5174",
+                        "https://student-placement-portal-frontend.vercel.app",
+                        "https://student-placement-portal-frontend-mi8lyndzj.vercel.app"
                 )
         );
 
+        // Allowed HTTP methods
         configuration.setAllowedMethods(
                 List.of(
                         "GET",
                         "POST",
                         "PUT",
                         "DELETE",
+                        "PATCH",
                         "OPTIONS"
                 )
         );
 
+        // Allow all request headers
         configuration.setAllowedHeaders(
                 List.of("*")
         );
 
+        // Allow cookies / Authorization credentials
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
@@ -108,14 +116,17 @@ public class SecurityConfig {
 
         http
 
+                // Disable CSRF because we are using JWT
                 .csrf(csrf -> csrf.disable())
 
+                // Enable CORS
                 .cors(cors ->
                         cors.configurationSource(
                                 corsConfigurationSource()
                         )
                 )
 
+                // Stateless session for JWT
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
@@ -124,33 +135,51 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Allow Preflight Request
+                        // ====================================
+                        // Allow CORS Preflight Requests
+                        // ====================================
+
                         .requestMatchers(
                                 HttpMethod.OPTIONS,
                                 "/**"
                         ).permitAll()
 
-                        // Public APIs
+                        // ====================================
+                        // Public Authentication APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/auth/**"
                         ).permitAll()
 
-                        // Student
+                        // ====================================
+                        // Student APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/student/**"
                         ).hasRole("STUDENT")
 
-                        // Company
+                        // ====================================
+                        // Company APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/company/**"
                         ).hasRole("COMPANY")
 
-                        // Admin
+                        // ====================================
+                        // Admin APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/admin/**"
                         ).hasRole("ADMIN")
 
+                        // ====================================
                         // Job View APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/jobs/all",
                                 "/api/jobs/search",
@@ -162,7 +191,10 @@ public class SecurityConfig {
                                 "ADMIN"
                         )
 
+                        // ====================================
                         // Job Modify APIs
+                        // ====================================
+
                         .requestMatchers(
                                 "/api/jobs/post",
                                 "/api/jobs/update",
@@ -172,10 +204,18 @@ public class SecurityConfig {
                                 "ADMIN"
                         )
 
+                        // ====================================
+                        // All Other APIs
+                        // ====================================
+
                         .anyRequest()
                         .authenticated()
 
                 )
+
+                // ====================================
+                // JWT Filter
+                // ====================================
 
                 .addFilterBefore(
                         jwtFilter,
